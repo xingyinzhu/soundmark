@@ -48,6 +48,7 @@ def _smartcode(stream):
         return u"bad unicode encode try!"
 #------------------------------------------------------------------------------- 
 def dealstring(string):
+    string = string.replace("\r\n","")
     string = string.replace("\n", "")
     string = string.strip(' ')
     string = string.replace("</li>","")
@@ -58,6 +59,7 @@ def dealstring(string):
 #-------------------------------------------------------------------------------
 def fetch(word):
     value = []
+    word = dealstring(word)
     value.append(word)
     #print prefix_url[0]+word
     print 'now fetch word : %s', word 
@@ -103,7 +105,7 @@ def fetch(word):
 if __name__ == "__main__":
     readWord()
     #conn = connect()
-    #value = fetch("emotion")
+    #value = fetch("arrangement")
     #testinsertonerecord(conn,value)
     #conn.commit()
     

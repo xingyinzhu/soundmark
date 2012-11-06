@@ -2,7 +2,7 @@
 from wordHtml import *
 from db import *
 #-------------------------------------------------------------------------------
-path = "E:\\jc.txt"
+path = "D:\\jc.txt"
 #-------------------------------------------------------------------------------
 def readWord():
     file = open(path)
@@ -26,12 +26,15 @@ def readWord():
 #-------------------------------------------------------------------------------
 
 def writetodisk():
-    outfile = open('E:\\jcout.txt','w')
+    outfile = open('D:\\jcout.txt','w')
     conn = connect()
     results = getresults(conn)
     
     for result in results:
-        outfile.writelines(result[1] + "[" + result[3] + ']\r\n' + result[4] + '\r\n')
+        print result[1].ljust(20), result[4]
+        str = "%s %s\r\n" %(result[1].ljust(20),result[4])
+        outfile.writelines(str)
+        outfile.writelines("[" + result[3] + ']\r\n')
         #print result[1] + " " + result[3] + " " + result[4] + '\r\n'
         #print 'ID: %d WORD %s ENGLISHMARK %s AMERICAMARK %s MEANING %s TYPE %d' % result
     outfile.close()
