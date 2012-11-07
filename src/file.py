@@ -30,13 +30,15 @@ def writetodisk():
     conn = connect()
     results = getresults(conn)
     
+    cnt = 1
     for result in results:
-        print result[1].ljust(20), result[4]
-        str = "%s %s\r\n" %(result[1].ljust(20),result[4])
-        outfile.writelines(str)
-        outfile.writelines("[" + result[3] + ']\r\n')
+        #print result[1].ljust(20), result[4]
+        string = "%s%s%s\n" %(str(cnt).ljust(5),result[1].ljust(20),result[4])
+        outfile.writelines(string)
+        outfile.writelines("     [" + result[2] + ']\n')
         #print result[1] + " " + result[3] + " " + result[4] + '\r\n'
         #print 'ID: %d WORD %s ENGLISHMARK %s AMERICAMARK %s MEANING %s TYPE %d' % result
+        cnt = cnt + 1
     outfile.close()
     conn.close()    
 #-------------------------------------------------------------------------------

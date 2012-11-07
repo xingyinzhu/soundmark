@@ -35,7 +35,7 @@ def readHtmlContent(url):
 
 
 #-------------------------------------------------------------------------------
-def _smartcode(stream):
+def smartcode(stream):
     ustring = stream
     codedetect = chardet.detect(ustring)["encoding"]
     try:
@@ -73,10 +73,10 @@ def fetch(word):
         cnt = 0
         for match in miter:
                         
-            #country = _smartcode(match.group('country'))
+            #country = smartcode(match.group('country'))
             #print country
             
-            phonetic = _smartcode(match.group('value'))
+            phonetic = smartcode(match.group('value'))
             phonetic = dealstring(phonetic)
             #print match.group('country')
             #print phonetic
@@ -87,12 +87,12 @@ def fetch(word):
         #meanings
         for match in miter2:
             meanings = match.group('meaning')
-            #meanings = _smartcode(match.group('meaning'))
+            #meanings = smartcode(match.group('meaning'))
             
             meanings = dealstring(meanings)
             #print meanings
             value.append(meanings)
-            #additions = _smartcode(match.group('addition'))
+            #additions = smartcode(match.group('addition'))
             
         #for match in miter3:
     #print value
