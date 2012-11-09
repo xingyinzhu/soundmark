@@ -1,5 +1,6 @@
-#Tue Nov 06 11:23:06 CST 2012
+#Fri Nov 09 16:20:15 CST 2012
 eclipse.preferences.version=1
 encoding//src/db.py=utf-8
 encoding//src/file.py=utf-8
+encoding//src/word.py=utf-8
 encoding//src/wordHtml.py=utf-8

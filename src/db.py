@@ -17,12 +17,13 @@ def connect():
 def testinsertonerecord(conn,value):
     cur = conn.cursor()
     conn.select_db('dict')
-        
+    
+    #print value
     
     sql = """INSERT INTO TEST_WORD(ID,\
-       WORD, ENGLISHMARK, AMERICAMARK, MEANING,TYPE) \
-       VALUES ("%d", "%s", "%s", "%s", "%s", "%d" )""" % \
-       (0,value[0], value[1], value[2], value[3], value[4])
+       WORD, ENGLISHMARK, AMERICAMARK, MEANING,TYPE,SENSEGROUP) \
+       VALUES ("%d", "%s", "%s", "%s", "%s", "%d", "%s" )""" % \
+       (0,value[0], value[1], value[2], value[3], value[4],value[5])
     
     try:
         #print sql
@@ -52,7 +53,7 @@ def getresults(conn):
     cur = conn.cursor()
     
     conn.select_db('dict')
-    cur.execute('select * from word where type = 1')
+    cur.execute('select * from test_word')
     results =cur.fetchall()
     return results
 #-------------------------------------------------------------------------------
@@ -62,9 +63,9 @@ def insertonerecord(conn,value):
         
     
     sql = """INSERT INTO WORD(ID,\
-       WORD, ENGLISHMARK, AMERICAMARK, MEANING,TYPE) \
-       VALUES ("%d", "%s", "%s", "%s", "%s", "%d" )""" % \
-       (0,value[0], value[1], value[2], value[3], value[4])
+       WORD, ENGLISHMARK, AMERICAMARK, MEANING,TYPE,SENSEGROUP) \
+       VALUES ("%d", "%s", "%s", "%s", "%s", "%d", "%s" )""" % \
+       (0,value[0], value[1], value[2], value[3], value[4],value[5])
     
     #sql = MySQLdb.escape_string(sql)
 
@@ -79,8 +80,22 @@ def insertonerecord(conn,value):
         #print 'error!!!!!'
         conn.rollback()
 #-------------------------------------------------------------------------------
-
-
+def getYQrecords(conn):
+    cur = conn.cursor()
+    conn.select_db('dict')
+    sql = """select * from word where sensegroup is not null"""
+    cur.execute(sql)
+    results =cur.fetchall()
+    return results 
+#-------------------------------------------------------------------------------
+def getonerecordbyword(conn,value):
+    cur = conn.cursor()
+    conn.select_db('dict')
+    #print """select * from word where WORD='%s'""" %(value)
+    sql = """select * from word where WORD='%s'""" %(value)
+    cur.execute(sql)
+    results =cur.fetchall()
+    return results 
 #-------------------------------------------------------------------------------
 #test
 if __name__ == "__main__":

@@ -62,7 +62,7 @@ def fetch(word):
     word = dealstring(word)
     value.append(word)
     #print prefix_url[0]+word
-    print 'now fetch word : %s', word 
+    print 'now fetch word : %s' %(word) 
     content = readHtmlContent(prefix_url[0]+word)
     
     if content != None:
@@ -103,9 +103,14 @@ def fetch(word):
 
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-    readWord()
-    #conn = connect()
-    #value = fetch("arrangement")
-    #testinsertonerecord(conn,value)
-    #conn.commit()
+    #readWord()
+    conn = connect()
+    value = fetch("ample")
+    value.append(None)
+    print value[2]
+    testinsertonerecord(conn,value)
+    conn.commit()
     
+    results = getresults(conn)
+    for result in results:
+        print "%s" %(result[2])
