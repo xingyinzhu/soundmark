@@ -88,6 +88,14 @@ def getYQrecords(conn):
     results =cur.fetchall()
     return results 
 #-------------------------------------------------------------------------------
+def getAdvrecords(conn):
+    cur = conn.cursor()
+    conn.select_db('dict')
+    sql = """select * from word where TYPE=3"""
+    cur.execute(sql)
+    results =cur.fetchall()
+    return results 
+#-------------------------------------------------------------------------------
 def getonerecordbyword(conn,value):
     cur = conn.cursor()
     conn.select_db('dict')

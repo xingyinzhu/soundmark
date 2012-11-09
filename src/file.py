@@ -4,7 +4,8 @@ from db import *
 from word import *
 #-------------------------------------------------------------------------------
 path = "D:\\jc.txt"
-pahtyq = "d:\\yq.txt"
+pahtyq = "D:\\yq.txt"
+pathadv = "D:\\adv.txt"
 #-------------------------------------------------------------------------------
 def readWord():
     file = open(path)
@@ -19,7 +20,7 @@ def readWord():
             cnt = cnt + 1
             line = line.strip(' ')
             value = fetch(line)
-            value.append("")
+            value.append(None)
             insertonerecord(conn,value)
             if cnt % 20 == 0:
                 conn.commit()
@@ -48,8 +49,8 @@ def writetodisk():
 
 
 def readWordYQ():
-    file = open(pahtyq)
-    
+    #file = open(pahtyq)
+    file = open(pathadv)
     conn = connect()
     chinese = "";
     
@@ -83,18 +84,19 @@ def readWordYQ():
     file.close()
 #-------------------------------------------------------------------------------
 def writeYQtodisk():
-    file = open(pahtyq)
-    outfile = open('D:\\yqout.txt','w')
+    file = open(pathadv)
+    outfile = open('D:\\advout.txt','w')
     conn = connect()
     chinese = "";
     
     YQ = {}
     
-    results = getYQrecords(conn)
+    #results = getYQrecords(conn)
+    results = getAdvrecords(conn)
     print 'haha'
     for result in results:
         w = Word(result[1],result[3],result[4])
-        #print result[1]
+        print result[1]
         YQ[result[1]] = w
     conn.close()    
     print 'lala'
@@ -138,6 +140,7 @@ def is_cn_line(line):
                 
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
+    #readWord()
     #writetodisk()
     #readWordYQ()
     writeYQtodisk()

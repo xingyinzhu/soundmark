@@ -76,7 +76,9 @@ def fetch(word):
             #country = smartcode(match.group('country'))
             #print country
             
-            phonetic = smartcode(match.group('value'))
+            #phonetic = smartcode(match.group('value'))
+            phonetic = match.group('value')
+            #print 'haha' + phonetic
             phonetic = dealstring(phonetic)
             #print match.group('country')
             #print phonetic
@@ -96,7 +98,7 @@ def fetch(word):
             
         #for match in miter3:
     #print value
-    value.append(1)
+    value.append(3)
     return value
 #-------------------------------------------------------------------------------
 
@@ -107,10 +109,11 @@ if __name__ == "__main__":
     conn = connect()
     value = fetch("ample")
     value.append(None)
-    print value[2]
-    testinsertonerecord(conn,value)
-    conn.commit()
+    #print value[2]
     
-    results = getresults(conn)
-    for result in results:
-        print "%s" %(result[2])
+    #testinsertonerecord(conn,value)
+    #conn.commit()
+    
+    #results = getresults(conn)
+    #for result in results:
+    #    print "%s" %(result[2])
