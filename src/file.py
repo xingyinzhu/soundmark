@@ -2,18 +2,20 @@
 from wordHtml import *
 from db import *
 from word import *
+from download import downmp3
 #-------------------------------------------------------------------------------
 path = "D:\\jc.txt"
 pahtyq = "D:\\yq.txt"
 pathadv = "D:\\adv.txt"
+pathmp3 = "D\\mp3.txt"
 #-------------------------------------------------------------------------------
 def readWord():
-    file = open(path)
+    filename = open(path)
     value = []
     conn = connect()
     cnt = 0
     while 1:
-        lines = file.readlines(1000)
+        lines = filename.readlines(1000)
         if not lines:
             break
         for line in lines:
@@ -47,17 +49,16 @@ def writetodisk():
     conn.close()    
 #-------------------------------------------------------------------------------
 
-
 def readWordYQ():
     #file = open(pahtyq)
-    file = open(pathadv)
+    filename = open(pathadv)
     conn = connect()
     chinese = "";
     
     cnt = 1
     total = 0;
     while 1:
-        lines = file.readlines(1000)
+        lines = filename.readlines(1000)
         if not lines:
             break
         for line in lines:
@@ -84,11 +85,10 @@ def readWordYQ():
     file.close()
 #-------------------------------------------------------------------------------
 def writeYQtodisk():
-    file = open(pathadv)
+    filename = open(pathadv)
     outfile = open('D:\\advout.txt','w')
     conn = connect()
-    chinese = "";
-    
+        
     YQ = {}
     
     #results = getYQrecords(conn)
@@ -102,7 +102,7 @@ def writeYQtodisk():
     print 'lala'
     cnt = 1
     while 1:
-        lines = file.readlines(1000)
+        lines = filename.readlines(1000)
         if not lines:
             break
         for line in lines:
@@ -139,11 +139,27 @@ def is_cn_line(line):
     return len1 != len2
                 
 #-------------------------------------------------------------------------------
+
+def fetchWordMp3():
+    filename = open(pathmp3)
+    while 1:
+        lines = filename.readlines(1000)
+        if not lines:
+            break
+        for line in lines:
+            #Blank line
+            if line == "\n":
+                continue 
+            line = line.strip(' ')
+            value = downmp3(line.lower())
+            
+#-------------------------------------------------------------------------------
 if __name__ == "__main__":
     #readWord()
     #writetodisk()
     #readWordYQ()
-    writeYQtodisk()
+    #writeYQtodisk()
+    fetchWordMp3()
 #-------------------------------------------------------------------------------
 
 
