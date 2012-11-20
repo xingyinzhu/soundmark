@@ -2,7 +2,6 @@
 import urllib2
 import re
 import chardet
-from file import *
 from urllib2 import HTTPError,URLError
 
 #-------------------------------------------------------------------------------
@@ -105,15 +104,4 @@ def fetch(word):
 
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-    #readWord()
-    conn = connect()
-    value = fetch("ample")
-    value.append(None)
-    #print value[2]
-    
-    #testinsertonerecord(conn,value)
-    #conn.commit()
-    
-    #results = getresults(conn)
-    #for result in results:
-    #    print "%s" %(result[2])
+    print 'haha'

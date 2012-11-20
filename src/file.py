@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from wordHtml import *
-from db import *
+from db import connect,insertonerecord,getresults,getAdvrecords,getdistinctwords
 from word import *
-from download import downmp3
+from wordHtml import fetch,dealstring
+from download import downloadmp3
 #-------------------------------------------------------------------------------
 path = "D:\\jc.txt"
 pahtyq = "D:\\yq.txt"
 pathadv = "D:\\adv.txt"
-pathmp3 = "D\\mp3.txt"
 #-------------------------------------------------------------------------------
 def readWord():
     filename = open(path)
@@ -93,7 +92,7 @@ def writeYQtodisk():
     
     #results = getYQrecords(conn)
     results = getAdvrecords(conn)
-    print 'haha'
+    #print 'haha'
     for result in results:
         w = Word(result[1],result[3],result[4])
         print result[1]
@@ -141,24 +140,15 @@ def is_cn_line(line):
 #-------------------------------------------------------------------------------
 
 def fetchWordMp3():
-    filename = open(pathmp3)
-    while 1:
-        lines = filename.readlines(1000)
-        if not lines:
-            break
-        for line in lines:
-            #Blank line
-            if line == "\n":
-                continue 
-            line = line.strip(' ')
-            value = downmp3(line.lower())
+    conn = connect()
+    results = getdistinctwords(conn)
+    for result in results:
+        #print result[0]
+        downloadmp3(result[0])
+    
             
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-    #readWord()
-    #writetodisk()
-    #readWordYQ()
-    #writeYQtodisk()
     fetchWordMp3()
 #-------------------------------------------------------------------------------
 

@@ -105,6 +105,15 @@ def getonerecordbyword(conn,value):
     results =cur.fetchall()
     return results 
 #-------------------------------------------------------------------------------
+def getdistinctwords(conn):
+    cur = conn.cursor()
+    conn.select_db('dict')
+    sql = """select word from word group by word"""
+    cur.execute(sql)
+    results =cur.fetchall()
+    return results 
+
+#-------------------------------------------------------------------------------
 #test
 if __name__ == "__main__":
     conn = connect()
