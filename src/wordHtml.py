@@ -56,7 +56,7 @@ def dealstring(string):
     string = string.replace("]","")
     return string
 #-------------------------------------------------------------------------------
-def fetch(word):
+def fetch(word,type,group=None):
     value = []
     word = dealstring(word)
     value.append(word)
@@ -97,7 +97,8 @@ def fetch(word):
             
         #for match in miter3:
     #print value
-    value.append(3)
+    value.append(group)
+    value.append(type)
     return value
 #-------------------------------------------------------------------------------
 
