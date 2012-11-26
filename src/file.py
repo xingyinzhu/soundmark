@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-from db import connect,insertonerecord,getresults,getAdvrecords,getdistinctwords
+from db import *
 from word import *
 from wordHtml import fetch,dealstring
 from download import downloadmp3
 #-------------------------------------------------------------------------------
-path = "D:\\jc.txt"
+pathjc = "D:\\jc.txt"
 pahtyq = "D:\\yq.txt"
 pathadv = "D:\\adv.txt"
 #-------------------------------------------------------------------------------
-def readWord():
-    filename = open(path)
+def getJCWords():
+    filename = open(pathjc)
     value = []
-    conn = connect()
+    conn = connectsqlite()
     cnt = 0
     while 1:
         lines = filename.readlines(1000)
@@ -20,14 +20,57 @@ def readWord():
         for line in lines:
             cnt = cnt + 1
             line = line.strip(' ')
+            line = line.lower()
             value = fetch(line)
-            value.append(None)
-            insertonerecord(conn,value)
+            insertOneToSqlite(conn,value)
             if cnt % 20 == 0:
                 conn.commit()
         conn.commit()
     conn.close()
-    file.close()    
+    filename.close()
+#-------------------------------------------------------------------------------
+def getYQandADVWords(path=pahtyq,wordtype=2):
+   
+    filename = open(path)
+    conn = connectsqlite()
+    chinese = "";
+    
+    cnt = 1
+    total = 0;
+    attri = [];
+    while 1:
+        lines = filename.readlines(1000)
+        if not lines:
+            break
+        for line in lines:
+            
+            #Blank line
+            if line == "\n":
+                continue 
+            #Chinese
+            if is_cn_line(line):
+                cnt = 0
+                chinese = line
+            #English Word
+            if is_cn_line(line)==False and line != "\n":
+                line = line.strip(' ')
+                line = line.lower()
+                value = fetch(line)
+                attri = [];
+                try:
+                    attri.append(line),attri.append(wordtype),attri.append(chinese)
+                    insertAttriToSqlite(conn,attri)
+                    insertOneToSqlite(conn,value)
+                    total = total + 1
+                except sqlite3.IntegrityError,e:
+                    print "SQL Error %d: %s" % (e.args[0], e.args[1])
+                    continue
+                cnt = cnt + 1 
+            if total % 20 == 0:
+                conn.commit()
+        conn.commit()
+    conn.close()
+    filename.close()
 #-------------------------------------------------------------------------------
 
 def writetodisk():
@@ -46,42 +89,8 @@ def writetodisk():
         cnt = cnt + 1
     outfile.close()
     conn.close()    
-#-------------------------------------------------------------------------------
-
-def readWordYQ():
-    #file = open(pahtyq)
-    filename = open(pathadv)
-    conn = connect()
-    chinese = "";
     
-    cnt = 1
-    total = 0;
-    while 1:
-        lines = filename.readlines(1000)
-        if not lines:
-            break
-        for line in lines:
-            
-            #Blank line
-            if line == "\n":
-                continue 
-            #Chinese
-            if is_cn_line(line):
-                cnt = 0
-                chinese = line
-            #English Word
-            if is_cn_line(line)==False and line != "\n":
-                line = line.strip(' ')
-                value = fetch(line.lower())
-                value.append(chinese)
-                insertonerecord(conn,value)
-                cnt = cnt + 1 
-                total = total + 1
-            if total % 20 == 0:
-                conn.commit()
-        conn.commit()
-    conn.close()
-    file.close()
+
 #-------------------------------------------------------------------------------
 def writeYQtodisk():
     filename = open(pathadv)
@@ -149,7 +158,10 @@ def fetchWordMp3():
             
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-    fetchWordMp3()
+    #fetchWordMp3()
+    #getJCWords()
+    getYQandADVWords(pathadv,3)
+    
 #-------------------------------------------------------------------------------
 
 

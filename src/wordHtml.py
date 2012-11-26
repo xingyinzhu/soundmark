@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import urllib2
 import re
-import chardet
 from urllib2 import HTTPError,URLError
-
+from db import *
 #-------------------------------------------------------------------------------
 path = ""
 prefix_url=["http://dict.youdao.com/search?q="]
@@ -32,19 +31,6 @@ def readHtmlContent(url):
         #content = None
     return content
 
-
-#-------------------------------------------------------------------------------
-def smartcode(stream):
-    ustring = stream
-    codedetect = chardet.detect(ustring)["encoding"]
-    try:
-        ustring = unicode(ustring,codedetect)
-        #type = sys.getfilesystemencoding()
-        type = 'utf8'
-        return "%s" %(ustring.encode(type))
-        #return "%s" %(ustring.encode('utf8')) 
-    except:
-        return u"bad unicode encode try!"
 #------------------------------------------------------------------------------- 
 def dealstring(string):
     string = string.replace("\r\n","")
@@ -56,7 +42,7 @@ def dealstring(string):
     string = string.replace("]","")
     return string
 #-------------------------------------------------------------------------------
-def fetch(word,type,group=None):
+def fetch(word):
     value = []
     word = dealstring(word)
     value.append(word)
@@ -96,13 +82,15 @@ def fetch(word,type,group=None):
             #additions = smartcode(match.group('addition'))
             
         #for match in miter3:
-    #print value
-    value.append(group)
-    value.append(type)
+    
     return value
 #-------------------------------------------------------------------------------
 
 
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-    print 'haha'
+    #print 'haha'
+    conn = connectsqlite()
+    value = fetch('monotonous',2,'少')
+    insertOneToSqlite(conn,value)
+    conn.commit()

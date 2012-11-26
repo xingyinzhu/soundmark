@@ -96,18 +96,35 @@ def getdistinctwords(conn):
     results =cur.fetchall()
     return results 
 #-------------------------------------------------------------------------------
-def insertOneToSqlite(conn,value):
+def insertAttriToSqlite(conn,value):
     cursor = conn.cursor()
-    sql = """INSERT INTO WORDS(WORD, ENGLISHMARK, AMERICAMARK, MEANINGS,GROUPS,TYPE)
-                       VALUES ("%s", "%s", "%s", "%s", "%s", %d)""" % \
-                        (value[0], value[1], value[2], value[3], value[4],value[5])
+    #print value
+    sql = """INSERT INTO ATTRIBUTE(WORD,TYPE,GROUPS)
+                       VALUES ("%s","%d", "%s")""" % \
+                        (value[0], value[1], value[2])
+    
     try:
         cursor.execute(sql)
-    except MySQLdb.Error,e:
-        print "SQL Error %d: %s" % (e.args[0], e.args[1])
-        
+    except sqlite3.Error,e:
+        print "SQL Error %s" % (e)
         conn.rollback()
-    conn.commit()
+#-------------------------------------------------------------------------------
+def insertOneToSqlite(conn,value):
+    cursor = conn.cursor()
+    sql = """INSERT INTO WORDS(WORD, ENGLISHMARK, AMERICAMARK, MEANINGS)
+                      VALUES ("%s", "%s", "%s", "%s")""" % \
+                        (value[0], value[1], value[2], value[3])
+                        
+    #sql = """INSERT INTO TEST_WORDS(WORD, ENGLISHMARK, AMERICAMARK, MEANINGS)
+    #                   VALUES ("%s", "%s", "%s", "%s")""" % \
+    #                    (value[0], value[1], value[2], value[3])
+                        
+    try:
+        cursor.execute(sql)
+    except sqlite3.Error,e:
+        print "SQL Error %s" % (e)
+        conn.rollback()
+    
 #-------------------------------------------------------------------------------
 
 
@@ -117,5 +134,6 @@ if __name__ == "__main__":
     print value
     conn = connectsqlite()
     insertOneToSqlite(conn,value)
+    conn.commit()
     #testselectfromsqlite(conn)
     
