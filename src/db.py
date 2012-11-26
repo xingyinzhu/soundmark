@@ -126,8 +126,19 @@ def insertOneToSqlite(conn,value):
         conn.rollback()
     
 #-------------------------------------------------------------------------------
+def isWordInDB(conn, word):
+    cursor = conn.cursor()
+    sql = """SELECT * FROM WORDS WHERE WORD = '%s'""" % (word)
+    #print sql
+    
+    cursor.execute(sql)
+    results =cursor.fetchall()
+    if len(results) == 0:
+        return False
+    
+    return True
 
-
+#-------------------------------------------------------------------------------
 #test
 if __name__ == "__main__":
     value = fetch('help',1,'group')

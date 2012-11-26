@@ -7,9 +7,18 @@ from download import downloadmp3
 pathjc = "D:\\jc.txt"
 pahtyq = "D:\\yq.txt"
 pathadv = "D:\\adv.txt"
+pathall = "D:\\all.txt"
+pathyl = "D:\\yl.txt"
 #-------------------------------------------------------------------------------
-def getJCWords():
-    filename = open(pathjc)
+def dealWithString(line):
+    line = line.strip(' ')
+    line = line.lower()
+    line = line.replace("\r\n","")
+    line = line.replace("\n", "")
+    return line
+#-------------------------------------------------------------------------------
+def getJCWords(path=pathjc):
+    filename = open(path)
     value = []
     conn = connectsqlite()
     cnt = 0
@@ -19,8 +28,7 @@ def getJCWords():
             break
         for line in lines:
             cnt = cnt + 1
-            line = line.strip(' ')
-            line = line.lower()
+            line = dealWithString(line)
             value = fetch(line)
             insertOneToSqlite(conn,value)
             if cnt % 20 == 0:
@@ -35,8 +43,8 @@ def getYQandADVWords(path=pahtyq,wordtype=2):
     conn = connectsqlite()
     chinese = "";
     
-    cnt = 1
-    total = 0;
+    cnt = 0
+    
     attri = [];
     while 1:
         lines = filename.readlines(1000)
@@ -49,24 +57,17 @@ def getYQandADVWords(path=pahtyq,wordtype=2):
                 continue 
             #Chinese
             if is_cn_line(line):
-                cnt = 0
                 chinese = line
             #English Word
             if is_cn_line(line)==False and line != "\n":
-                line = line.strip(' ')
-                line = line.lower()
+                line = dealWithString(line)
                 value = fetch(line)
                 attri = [];
-                try:
-                    attri.append(line),attri.append(wordtype),attri.append(chinese)
-                    insertAttriToSqlite(conn,attri)
-                    insertOneToSqlite(conn,value)
-                    total = total + 1
-                except sqlite3.IntegrityError,e:
-                    print "SQL Error %d: %s" % (e.args[0], e.args[1])
-                    continue
+                attri.append(line),attri.append(wordtype),attri.append(chinese)
+                insertAttriToSqlite(conn,attri)
+                insertOneToSqlite(conn,value)
                 cnt = cnt + 1 
-            if total % 20 == 0:
+            if cnt % 20 == 0:
                 conn.commit()
         conn.commit()
     conn.close()
@@ -138,7 +139,23 @@ def writeYQtodisk():
                  
     file.close()
     outfile.close()
+#-------------------------------------------------------------------------------
+def judgeWordInDB():
+    filename = open(pathall)
+    conn = connectsqlite()
     
+    while 1:
+        lines = filename.readlines(1000)
+        if not lines:
+            break
+        for line in lines:
+            line = dealWithString(line)
+            result = isWordInDB(conn,line)
+            if result == False:
+                print line
+            
+    conn.close()
+    filename.close()
     
 #-------------------------------------------------------------------------------
 def is_cn_line(line): 
@@ -157,11 +174,15 @@ def fetchWordMp3():
     
             
 #-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
 if __name__ == "__main__":
     #fetchWordMp3()
-    #getJCWords()
+    getJCWords()
+    getYQandADVWords()
     getYQandADVWords(pathadv,3)
-    
+    judgeWordInDB()
 #-------------------------------------------------------------------------------
 
 
