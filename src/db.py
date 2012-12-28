@@ -2,12 +2,15 @@
 
 import MySQLdb
 import sqlite3
-from wordHtml import fetch
+#from wordHtml import fetch
 #-------------------------------------------------------------------------------
 dbhost = 'localhost'
 dbuser = 'root'
 dbpswd = '123456'
 dbport = 3306
+#tmp
+attribute_id = 4
+#tmp
 #-------------------------------------------------------------------------------
 sqlitedb = 'd:/dict/dict.db'
 #-------------------------------------------------------------------------------
@@ -55,11 +58,11 @@ def getrecord(conn):
         print 'ID: %d WORD %s ENGLISHMARK %s AMERICAMARK %s MEANING %s TYPE %d' % result
     
 #-------------------------------------------------------------------------------
-def getresults(conn):
+def getresults(conn,tablename):
     cur = conn.cursor()
     
-    conn.select_db('dict')
-    cur.execute('select * from test_word')
+    print 'select * from '+ tablename
+    cur.execute('select * from ' + tablename + " where id>=43")
     results =cur.fetchall()
     return results
 #-------------------------------------------------------------------------------
@@ -139,12 +142,61 @@ def isWordInDB(conn, word):
     return True
 
 #-------------------------------------------------------------------------------
-#test
-if __name__ == "__main__":
-    value = fetch('help',1,'group')
-    print value
-    conn = connectsqlite()
-    insertOneToSqlite(conn,value)
+def trim(str):
+    
+    str = str.replace("\n", "")
+    #str = str.replace("\r\n","")
+    return str
+    
+#-------------------------------------------------------------------------------
+#
+def buildAttributeIndex(conn, results):
+    
+    global attribute_id
+    
+    lasttmp = results[0][3]
+    for result in results:
+        tmp = result[3]
+        if cmp(lasttmp, tmp) != 0:
+            lastid = result[0];
+            attribute_id = attribute_id + 1
+            print "%s %s" %(trim(tmp) , attribute_id);
+            updateAndInsert(conn,trim(lasttmp),attribute_id,lastid);
+            lasttmp = tmp
+        if attribute_id % 60 == 0:
+            conn.commit()
+            
     conn.commit()
+#-------------------------------------------------------------------------------
+def updateAndInsert(conn, str, id,lastid):
+    cursor = conn.cursor()
+    likestr = "%" + str + "%"
+    sql = """UPDATE attribute set groups = %d where groups like '%s' and id < %d""" % (id,likestr,lastid)
+    #print sql;
+    cursor.execute(sql)
+    
+    
+    sql = """INSERT INTO attribute_id(attributeid, attributename)
+                      VALUES (%d, "%s")""" % (id, str)
+    #print sql;
+    cursor.execute(sql)               
+    
+#-------------------------------------------------------------------------------
+#test
+
+#if __name__ == "__main__":
+#    value = fetch('help',1,'group')
+#    print value
+#    conn = connectsqlite()
+#    insertOneToSqlite(conn,value)
+#    conn.commit()
     #testselectfromsqlite(conn)
     
+if __name__ == "__main__":
+    
+    conn = connectsqlite()
+    results = getresults(conn,'attribute')
+    buildAttributeIndex(conn,results)
+        
+        
+        
