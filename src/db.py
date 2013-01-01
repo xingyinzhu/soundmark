@@ -2,6 +2,7 @@
 
 import MySQLdb
 import sqlite3
+import datetime
 #from wordHtml import fetch
 #-------------------------------------------------------------------------------
 dbhost = 'localhost'
@@ -182,6 +183,40 @@ def updateAndInsert(conn, str, id,lastid):
     cursor.execute(sql)               
     
 #-------------------------------------------------------------------------------
+def updateWordsType(conn,str,value):
+    cursor = conn.cursor()
+    selectsql = """select * from word where WORD='%s'""" %(str)
+    
+    cursor.execute(selectsql)
+    results =cursor.fetchall()
+    if len(results) == 0:
+        insertsql = """ INSERT INTO ATTRIBUTE(WORD,TYPE,GROUPS)
+                       VALUES ("%s",%d, %d)""" % \
+                        (str, value, 0)
+                        
+        #print insertsql;
+        cursor.execute(insertsql)
+    else:
+        updatesql = """UPDATE attribute set type = %d where word = '%s'""" % (value, str)
+        #print updatesql;
+        cursor.execute(updatesql)
+
+#-------------------------------------------------------------------------------
+def insertNewValuesToProgress(conn,curvalue,goalvalue):
+    cursor = conn.cursor()
+    selectsql = """select word from WORDS""";
+    cursor.execute(selectsql)
+    results = cursor.fetchall();
+    
+    for result in results:
+        word = result[0]
+        now=datetime.datetime.now()
+        #insertsql = """INSERT INTO progress(word, value, goal, updatetime)
+                      #VALUES ("%s", %d, %d, ?)""" % (word, curvalue, goalvalue,now)
+        #print insertsql
+        cursor.execute("INSERT INTO progress VALUES (?, ?, ? , ?)" , (word, curvalue, goalvalue,now))
+    
+#-------------------------------------------------------------------------------
 #test
 
 #if __name__ == "__main__":
@@ -195,8 +230,10 @@ def updateAndInsert(conn, str, id,lastid):
 if __name__ == "__main__":
     
     conn = connectsqlite()
-    results = getresults(conn,'attribute')
-    buildAttributeIndex(conn,results)
+    insertNewValuesToProgress(conn,0,50)
+    conn.commit()
+    #results = getresults(conn,'attribute')
+    #buildAttributeIndex(conn,results)
         
         
         

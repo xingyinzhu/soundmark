@@ -171,18 +171,39 @@ def fetchWordMp3():
     for result in results:
         #print result[0]
         downloadmp3(result[0])
-    
-            
+                
 #-------------------------------------------------------------------------------
-
-
+def updateJCWordsType(path=pathjc):
+    filename = open(path)
+    value = []
+    conn = connectsqlite()
+    cnt = 0
+    while 1:
+        lines = filename.readlines(1000)
+        if not lines:
+            break
+        for line in lines:
+            cnt = cnt + 1
+            line = dealWithString(line)
+            #value = fetch(line)
+            #insertOneToSqlite(conn,value)
+            updateWordsType(conn,line,1)
+            if cnt % 20 == 0:
+                conn.commit()
+        conn.commit()
+    conn.close()
+    filename.close()
+        
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
     #fetchWordMp3()
-    getJCWords()
-    getYQandADVWords()
-    getYQandADVWords(pathadv,3)
-    judgeWordInDB()
+    
+    #getJCWords()
+    #getYQandADVWords()
+    #getYQandADVWords(pathadv,3)
+    #judgeWordInDB()
+    
+    updateJCWordsType()
 #-------------------------------------------------------------------------------
 
 
