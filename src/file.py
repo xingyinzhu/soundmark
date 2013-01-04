@@ -9,6 +9,8 @@ pahtyq = "D:\\yq.txt"
 pathadv = "D:\\adv.txt"
 pathall = "D:\\all.txt"
 pathyl = "D:\\yl.txt"
+path1300 = "D:\\1300.txt"
+
 #-------------------------------------------------------------------------------
 def dealWithString(line):
     line = line.strip(' ')
@@ -73,6 +75,53 @@ def getYQandADVWords(path=pahtyq,wordtype=2):
     conn.close()
     filename.close()
 #-------------------------------------------------------------------------------
+def updateDictWith1300(path=path1300):
+    filename = open(path)
+    value = []
+    conn = connectsqlite()
+    cnt = 0
+    ctype = ""
+    word = ""
+    hint = ""
+    for line in filename.readlines():
+        if not line:
+            break
+        #Blank line
+        if line == "\n":
+            if word == "":
+                continue
+            else:
+                print " type : " + ctype + " word : " + word  +  " no hint : "
+                updateHintandAttribute(conn,ctype,word,"")
+                cnt = cnt + 1
+                word = ""
+                continue
+        
+        array = line.split("\t")
+        
+        if is_cn_line(array[0]) and array[0].find("/") == -1:
+            ctype = array[0]
+        elif array[0].find("/") == 0:
+            hint = array[0]
+            print " type : " + ctype + " word : " + word  +  " hint : " + hint
+            updateHintandAttribute(conn,ctype,word,hint)
+            word = ""
+            hint = ""
+            cnt = cnt + 1
+        elif is_cn_line(array[1]) == False:
+            word = array[1]
+        
+        
+        #if cnt == 10:
+        #    break
+        if cnt == 100:
+            conn.commit()
+    
+    conn.commit()
+    
+    print cnt
+    filename.close()
+#-------------------------------------------------------------------------------
 
 def writetodisk():
     outfile = open('D:\\jcout.txt','w')
@@ -90,9 +139,8 @@ def writetodisk():
         cnt = cnt + 1
     outfile.close()
     conn.close()    
-    
-
 #-------------------------------------------------------------------------------
+
 def writeYQtodisk():
     filename = open(pathadv)
     outfile = open('D:\\advout.txt','w')
@@ -194,16 +242,18 @@ def updateJCWordsType(path=pathjc):
     conn.close()
     filename.close()
         
+
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
+    
+    updateDictWith1300()
     #fetchWordMp3()
     
     #getJCWords()
     #getYQandADVWords()
     #getYQandADVWords(pathadv,3)
     #judgeWordInDB()
-    
-    updateJCWordsType()
+    #updateJCWordsType()
 #-------------------------------------------------------------------------------
 
 

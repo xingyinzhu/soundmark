@@ -10,7 +10,7 @@ dbuser = 'root'
 dbpswd = '123456'
 dbport = 3306
 #tmp
-attribute_id = 4
+attribute_id = 0
 #tmp
 #-------------------------------------------------------------------------------
 sqlitedb = 'd:/dict/dict.db'
@@ -216,6 +216,49 @@ def insertNewValuesToProgress(conn,curvalue,goalvalue):
         #print insertsql
         cursor.execute("INSERT INTO progress VALUES (?, ?, ? , ?)" , (word, curvalue, goalvalue,now))
     
+#-------------------------------------------------------------------------------
+
+def updateHint(conn,word,hint):
+    cursor = conn.cursor()
+    updateSql = """update words set hint = '%s' where word = '%s' """ % (hint,word)
+    cursor.execute(updateSql)
+    #print updateSql
+#-------------------------------------------------------------------------------
+def insertAttribute(conn,ctype,id):
+    cursor = conn.cursor()
+    insertSql = """INSERT INTO attribute_id(attributeid, attributename)
+                      VALUES (%d, "%s")""" % (id, ctype)
+    #print insertSql;
+    cursor.execute(insertSql)
+#-------------------------------------------------------------------------------
+def addOrGetAttributeId(conn,ctype):
+    global attribute_id
+    cursor = conn.cursor()
+    selectSql = """select * from attribute_id where attributename = '%s'""" % (ctype)
+    #print selectSql
+    
+    cursor.execute(selectSql)
+    results =cursor.fetchall()
+    if len(results) == 0:
+        attribute_id = attribute_id + 1
+        insertAttribute(conn,ctype,attribute_id)
+        return attribute_id
+    else:
+        for result in results:
+            return result[0]
+#-------------------------------------------------------------------------------
+def updateAttribute(conn,word,id):
+    cursor = conn.cursor()
+    updateSql = """update attribute set groups = %d where word = '%s'""" %(id, word)
+    #print updateSql
+    cursor.execute(updateSql)
+    
+#-------------------------------------------------------------------------------
+def updateHintandAttribute(conn,ctype,word,hint):
+    if hint != "":
+        updateHint(conn,word,hint)
+    id = addOrGetAttributeId(conn,ctype);
+    updateAttribute(conn,word,id)
 #-------------------------------------------------------------------------------
 #test
 
