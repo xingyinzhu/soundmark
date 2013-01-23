@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+#special test for git gui in windows
+#after github had been blocked in China
 from db import *
 from word import *
 from wordHtml import fetch,dealstring
