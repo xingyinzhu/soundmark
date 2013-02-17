@@ -7,7 +7,7 @@ from wordHtml import fetch,dealstring
 from download import downloadmp3
 #-------------------------------------------------------------------------------
 pathjc = "D:\\jc.txt"
-pahtyq = "D:\\yq.txt"
+pathyq = "D:\\yq.txt"
 pathadv = "D:\\adv.txt"
 pathall = "D:\\all.txt"
 pathyl = "D:\\yl.txt"
@@ -41,7 +41,37 @@ def getJCWords(path=pathjc):
     conn.close()
     filename.close()
 #-------------------------------------------------------------------------------
-def getYQandADVWords(path=pahtyq,wordtype=2):
+def updateYQWwords(path=pathyq):
+    filename = open(path)
+    chinese = ""
+    conn = connectsqlite()
+    cnt = 1
+    while 1:
+        lines = filename.readlines(1000)
+        if not lines:
+            break
+        for line in lines:
+            if line == "\n" or line == "":
+                continue
+            if is_cn_line(line) and not line[0].isdigit() and not "[" in line:
+                chinese = dealstring(line)
+                #print chinese
+                insertAttribute(conn,chinese,cnt)
+                cnt = cnt + 1
+            if line[0].isdigit():
+                words = line.split()
+                #print chinese + ":" + words[1]
+                value = []
+                value.append(words[1])
+                value.append(2)
+                value.append(cnt-1)
+                insertAttriToSqlite(conn,value)
+    conn.commit()
+    conn.close()
+    filename.close()
+    print cnt   
+#-------------------------------------------------------------------------------
+def getYQandADVWords(path=pathyq,wordtype=2):
    
     filename = open(path)
     conn = connectsqlite()
@@ -247,8 +277,8 @@ def updateJCWordsType(path=pathjc):
 
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
-    
-    updateDictWith1300()
+    updateYQWwords('D:\dict\yqout.txt')
+    #updateDictWith1300()
     #fetchWordMp3()
     
     #getJCWords()
